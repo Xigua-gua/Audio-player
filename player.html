@@ -6,57 +6,10 @@
         <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css"  charset="utf-8">
         <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
         <title>Music player</title>
-        <style>
-            body {
-                background: rgb(76, 210, 199);
-            }
-            .center {
-                text-align: center;
-            }
-            #id-input-slider {
-                width: 100%;
-                display: inline-block;
-                margin-top: 10px;
-            }
-            time.left {
-                float: left;
-            }
-            time.right {
-                float: right;
-            }
-            #id-h1-song-title {
-                height: 30px;
-                margin: 10px 0;
-                color: #f92970;
-                font-size: 25px;
-            }
-            .player-button {
-                display: inline-block;
-                background-color: rgb(2, 2, 2);
-                padding: 3px 10px;
-                border-radius: 7px;
-                font-size: 20px;
-                border: 0;
-                color: white;
-            }
-            .player-list-container {
-                margin-top: 10px;
-            }
-            .song {
-                font-size: 18px;
-                cursor: pointer;
-                padding: 2px;
-                color: snow;
-            }
-        </style>
-
+        <link rel="stylesheet" href="player.css" charset="utf-8">
     </head>
     <body>
-        <audio id=id-audio-player >
-            <source src="music/空白格.mp3" >
-            <source src="music/其实都没有.mp3" >
-            <source src="music/if you.mp3" >
-        </audio>
+        <!-- <audio id=id-audio-player src="music/空白格.mp3"></audio> -->
         <div class="player-controls">
             <div class="player-slider center">
                 <input id=id-input-slider type="range" min=0 max=100 value="0">
@@ -68,119 +21,15 @@
         </div>
         <h1 id=id-h1-song-title class="center"><i class="fa fa-music"> 空白格</i></h1>
         <div class="player-play center">
-            <button class="player-button" type="button" >
-                <i class="fa fa-step-backward" data-action=prev></i>
-            </button>
-            <button class="player-button" type="button">
-                <i class="fa fa-play" data-action=play></i>
-                <!-- <i class="fa fa-pause"></i> -->
-            </button>
-            <button class="player-button" type="button">
-                <i class="fa fa-step-forward" data-action=next></i>
-            </button>
+            <button class="player-button fa fa-step-backward" type="button" data-action="prev"></button>
+            <button class="player-button fa fa-play" type="button" data-action="play"></button>
+            <button class="player-button fa fa-step-forward" type="button" data-action="next"></button>
         </div>
         <div class="player-list-container center">
-            <div class="song">空白格</div>
+            <!-- <div class="song">空白格</div>
             <div class="song">其实都没有</div>
-            <div class="song">if you</div>
+            <div class="song">if you</div> -->
         </div>
     </body>
-    <script>
-        // log
-        var log = function() {
-            console.log.apply(console, arguments);
-        }
-        // 设置滑块 时间进度
-        var setSlider = function(value) {
-            var v = value * 100
-            $('#id-input-slider').val(v)
-        }
-        var nChar = function(char, n) {
-            var s = ''
-            for (var i = 0; i < n; i++) {
-                s += char
-            }
-            return s
-        }
-        var zfill = function(n, width) {
-            var s = String(n)
-            var len = s.length
-            return nChar('0', width - len) + s
-        }
-        var labelFromTime = function(time) {
-            var minutes = zfill(Math.floor(time / 60),2)
-            var seconds = zfill(Math.floor(time % 60),2)
-            var t = `${minutes}:${seconds}`
-            return t
-        }
-        var bindAudioEvents = function() {
-            $('#id-audio-player').on('timeupdate', function(e){
-                var player = e.target
-                // 设置 播放比例
-                var value = player.currentTime / player.duration
-                setSlider(value)
-                var time = labelFromTime(player.currentTime)
-                $('#id-time-current').text(time)
-            })
-            // 音乐播放完了之后的时间
-            $("#id-audio-player").on('ended', function(e){
-                log('播放模式', playerMode)
-                // 根据播放模式来播放下一首
-            })
-            // 加载音乐后的事件
-            $('#id-audio-player').on('canplay', function(e){
-                var player = e.target
-                log('can play', player.duration)
-                // var minutes = Math.floor(player.duration / 60)
-                // var seconds = Math.floor(player.duration % 60)
-                // var time = `${minutes}:${seconds}`
-                var time = labelFromTime(player.duration)
-                // 滑条归位， 时间重置
-                $('#id-input-slider').val(0)
-                $('#id-time-current').text('00:00')
-                $('#id-time-duration').text(time)
-            })
-        }
-        bindAudioEvents()
-        var prevSong = function() {
-
-            log('上一首')
-        }
-        var nextSong = function() {
-            log('nextSong')
-        }
-        var playSong = function(button) {
-            $('#id-audio-player')[0].play()
-            button.parent().html(`<i class="fa fa-pause" data-action='pause'></i>`)
-        }
-        var pauseSong = function(button) {
-            $('#id-audio-player')[0].pause()
-            button.parent().html(`<i class="fa fa-play" data-action='play'></i>`)
-        }
-        var bindPlayEvents = function() {
-            $('.player-play').on('click', 'i', function(event) {
-                var button = $(event.target)
-                var type = button.data('action')
-                var actions = {
-                    prev: prevSong,
-                    next: nextSong,
-                    play: playSong,
-                    pause: pauseSong,
-                }
-                var action = actions[type]
-                action(button)
-            })
-        }
-        bindPlayEvents()
-        // var bindEvents = function() {
-        //     bindAudioEvents()
-        //     bindPlayEvents()
-        // }
-        // var __main = function() {
-        //     bindEvents()
-        // }
-        // $(document).ready(function(){
-        //     __main()
-        // })
-    </script>
+    <script src='player.js'></script>
 </html>

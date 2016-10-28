@@ -10,26 +10,33 @@
     </head>
     <body>
         <!-- <audio id=id-audio-player src="music/空白格.mp3"></audio> -->
-        <div class="player-controls">
-            <div class="player-slider center">
-                <input id=id-input-slider type="range" min=0 max=100 value="0">
+        <div class="content">
+            <div class="player-controls">
+                <div class="player-slider center">
+                    <input id=id-input-slider type="range" min=0 max=100 value="0">
+                    <range>
+                        <div class="prog"></div>
+                    </range>
+                </div>
+                <div class="player-time">
+                    <time id=id-time-current class="left"></time>
+                    <time id=id-time-duration class="right"></time>
+                </div>
             </div>
-            <div class="player-time">
-                <time id=id-time-current class="left"></time>
-                <time id=id-time-duration class="right"></time>
+            <h1 id=id-h1-song-title class="center"><i class="fa fa-music"> 空白格</i></h1>
+            <div class="player-play center">
+                <button class="player-button fa fa-random" type="button"></button>
+                <button class="player-button fa fa-step-backward" type="button" data-action="prev"></button>
+                <button class="player-button fa fa-play" type="button" data-action="play"></button>
+                <button class="player-button fa fa-step-forward" type="button" data-action="next"></button>
+            </div>
+            <div class="player-list-container center">
+                <!-- <div class="song">空白格</div>
+                <div class="song">其实都没有</div>
+                <div class="song">if you</div> -->
             </div>
         </div>
-        <h1 id=id-h1-song-title class="center"><i class="fa fa-music"> 空白格</i></h1>
-        <div class="player-play center">
-            <button class="player-button fa fa-step-backward" type="button" data-action="prev"></button>
-            <button class="player-button fa fa-play" type="button" data-action="play"></button>
-            <button class="player-button fa fa-step-forward" type="button" data-action="next"></button>
-        </div>
-        <div class="player-list-container center">
-            <!-- <div class="song">空白格</div>
-            <div class="song">其实都没有</div>
-            <div class="song">if you</div> -->
-        </div>
+
     </body>
     <script src='player.js'></script>
 </html>

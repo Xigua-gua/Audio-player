@@ -1,3 +1,5 @@
+
+
 body {
     background: rgb(76, 210, 199);
 }
@@ -5,9 +7,30 @@ body {
     text-align: center;
 }
 #id-input-slider {
-    width: 100%;
+    width: 96%;
     display: inline-block;
     margin-top: 10px;
+    height: 15px;
+    opacity: 0;
+}
+range {
+    width: 96%;
+    display: block;
+    margin-top: -20px;
+    height: 8px;
+    border-radius: 18px;
+    background-color: #bf9d9d;
+    position: absolute;
+}
+.prog {
+    height: 95%;
+    position: absolute;
+    border-radius: 3px;
+    left: 0px;
+    width: 0;
+    border-radius: 5px;
+    margin-top: 0px;
+    background-color: rgba(140, 49, 130, 0.58);
 }
 time.left {
     float: left;

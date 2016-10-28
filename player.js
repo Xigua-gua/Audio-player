@@ -3,13 +3,9 @@
 var log = function() {
     console.log.apply(console, arguments);
 }
+
 var songList = ["空白格.mp3", "其实都没有.mp3", "if you.mp3"]
-var bindAppendAudio = function() {
-    log('audio')
-    var audio = `<audio id=id-audio-player src="music/${songList[0]}"></audio>`
-    $('body').append(audio)
-}
-bindAppendAudio()
+
 
 var titleList = function(songList) {
     var list = []
@@ -22,6 +18,75 @@ var titleList = function(songList) {
     return list
 }
 
+var prevSrc = function(src) {
+    var len = songList.length
+    for (var i = 0; i < songList.length; i++) {
+        var s = `music/${songList[i]}`
+        if (src == s) {
+            if (i == 0) {
+                var title = titleList(songList)[len - 1]
+                $('#id-h1-song-title>i').text('  '+title)
+                return `music/${songList[len - 1]}`
+            }
+            var title = titleList(songList)[i - 1]
+            $('#id-h1-song-title>i').text('  '+title)
+            return `music/${songList[i - 1]}`
+        }
+    }
+}
+
+var nextSrc = function(src) {
+    var len = songList.length
+    for (var i = 0; i < songList.length; i++) {
+        var s = `music/${songList[i]}`
+        if (src == s) {
+            if (i == len - 1) {
+                var title = titleList(songList)[0]
+                $('#id-h1-song-title>i').text('  '+title)
+                return `music/${songList[0]}`
+            }
+            var title = titleList(songList)[i + 1]
+            $('#id-h1-song-title>i').text('  '+title)
+            return `music/${songList[i + 1]}`
+        }
+    }
+}
+
+// 设置滑块 时间进度
+var setSlider = function(value) {
+    var v = value * 100
+    $('#id-input-slider').val(v)
+}
+
+var nChar = function(char, n) {
+    var s = ''
+    for (var i = 0; i < n; i++) {
+        s += char
+    }
+    return s
+}
+
+var zfill = function(n, width) {
+    var s = String(n)
+    var len = s.length
+    return nChar('0', width - len) + s
+}
+
+var labelFromTime = function(time) {
+    var minutes = zfill(Math.floor(time / 60),2)
+    var seconds = zfill(Math.floor(time % 60),2)
+    var t = `${minutes}:${seconds}`
+    return t
+}
+
+// 添加播放器
+var bindAppendAudio = function() {
+    log('audio')
+    var audio = `<audio id=id-audio-player src="music/${songList[0]}"></audio>`
+    $('body').append(audio)
+}
+
+// 添加播放列表
 var bindAddSongList = function() {
     var playlist = $('.player-list-container')
     var list = titleList(songList)
@@ -31,92 +96,21 @@ var bindAddSongList = function() {
         playlist.append(song)
     }
 }
-bindAddSongList()
 
-
-var prevSrc = function(src) {
-    var len = songList.length
-    for (var i = 0; i < songList.length; i++) {
-        var s = `music/${songList[i]}`
-        if (src == s) {
-            if (i == 0) {
-                var title = titleList(songList)[len - 1]
-                $('#id-h1-song-title>i').text(title)
-                return `music/${songList[len - 1]}`
-            }
-            var title = titleList(songList)[i - 1]
-            $('#id-h1-song-title>i').text(title)
-            return `music/${songList[i - 1]}`
-        }
-    }
-}
-var nextSrc = function(src) {
-    var len = songList.length
-    for (var i = 0; i < songList.length; i++) {
-        var s = `music/${songList[i]}`
-        if (src == s) {
-            if (i == len - 1) {
-                var title = titleList(songList)[0]
-                $('#id-h1-song-title>i').text(title)
-                return `music/${songList[0]}`
-            }
-            var title = titleList(songList)[i + 1]
-            $('#id-h1-song-title>i').text(title)
-            return `music/${songList[i + 1]}`
-        }
-    }
-}
-var prevSong = function() {
-    var activeSrc = $('#id-audio-player').attr('src')
-    var nowsrc = prevSrc(activeSrc)
-    log('播放上一首--->', nowsrc)
-    var player = $('#id-audio-player')[0]
-    player.autoplay = !player.paused
-    player.src = nowsrc
-}
-var nextSong = function() {
-    var activeSrc = $('#id-audio-player').attr('src')
-    var nowsrc = nextSrc(activeSrc)
-    log('播放下一首--->', nowsrc)
-    var player = $('#id-audio-player')[0]
-    player.autoplay = !player.paused
-    player.src = nowsrc
-}
-
-// 设置滑块 时间进度
-var setSlider = function(value) {
-    var v = value * 100
-    $('#id-input-slider').val(v)
-}
-var nChar = function(char, n) {
-    var s = ''
-    for (var i = 0; i < n; i++) {
-        s += char
-    }
-    return s
-}
-var zfill = function(n, width) {
-    var s = String(n)
-    var len = s.length
-    return nChar('0', width - len) + s
-}
-var labelFromTime = function(time) {
-    var minutes = zfill(Math.floor(time / 60),2)
-    var seconds = zfill(Math.floor(time % 60),2)
-    var t = `${minutes}:${seconds}`
-    return t
-}
+// 绑定播放器事件
 var bindAudioEvents = function() {
     $('#id-audio-player').on('timeupdate', function(e){
         var player = e.target
         // 设置 播放比例
         var value = player.currentTime / player.duration
         setSlider(value)
+        $('.prog').width((value * 100) / 100 * $('range').width())
         var time = labelFromTime(player.currentTime)
         $('#id-time-current').text(time)
     })
-    // 音乐播放完了之后的时间
+    // 音乐播放完了之后的事件
     $("#id-audio-player").on('ended', function(e){
+
         log('播放模式', playerMode)
         // 根据播放模式来播放下一首
     })
@@ -131,21 +125,44 @@ var bindAudioEvents = function() {
         $('#id-time-duration').text(time)
     })
 }
-bindAudioEvents()
 
+// 播放上一首
+var prevSong = function() {
+    var activeSrc = $('#id-audio-player').attr('src')
+    var nowsrc = prevSrc(activeSrc)
+    log('播放上一首--->', nowsrc)
+    var player = $('#id-audio-player')[0]
+    player.autoplay = !player.paused
+    player.src = nowsrc
+}
 
+//播放下一首
+var nextSong = function() {
+    var activeSrc = $('#id-audio-player').attr('src')
+    var nowsrc = nextSrc(activeSrc)
+    log('播放下一首--->', nowsrc)
+    var player = $('#id-audio-player')[0]
+    player.autoplay = !player.paused
+    player.src = nowsrc
+}
+
+// 播放歌曲
 var playSong = function(button) {
     $('#id-audio-player')[0].play()
     button.dataset.action = 'pause'
     $(button).removeClass("fa-play").addClass("fa-pause")
     log('button',button)
 }
+
+// 暂停歌曲
 var pauseSong = function(button) {
     $('#id-audio-player')[0].pause()
     button.dataset.action = 'play'
     $(button).removeClass("fa-pause").addClass("fa-play")
     log('button',button)
 }
+
+// 播放事件
 var bindPlayEvents = function() {
     $('.player-play').on('click', '.player-button', function(event) {
         var button = event.target
@@ -160,8 +177,8 @@ var bindPlayEvents = function() {
         action(button)
     })
 }
-bindPlayEvents()
 
+// 选择曲目播放
 var bindSwitch = function() {
     var player = $('#id-audio-player')[0]
     // 点击切换歌曲
@@ -176,7 +193,25 @@ var bindSwitch = function() {
         player.src = `music/${song}.mp3`
         log('duration', player.duration)
         // 设置当前歌曲名称
-        $('#id-h1-song-title>i').text(song)
+        $('#id-h1-song-title>i').text('  '+song)
     })
 }
-bindSwitch()
+
+
+var bindEvents = function() {
+    bindAddSongList()
+    bindAppendAudio()
+    bindAudioEvents()
+    bindPlayEvents()
+    bindSwitch()
+}
+
+bindEvents()
+
+
+
+
+/*
+
+
+*/

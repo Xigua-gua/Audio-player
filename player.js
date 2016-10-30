@@ -4,60 +4,8 @@ var log = function() {
     console.log.apply(console, arguments);
 }
 
-var songList = ["空白格.mp3", "其实都没有.mp3", "if you.mp3"]
 
-
-var titleList = function(songList) {
-    var list = []
-    for (var i = 0; i < songList.length; i++) {
-        var len = songList[i].length
-        var s = songList[i].slice(0,len -4)
-        list.push(s)
-    }
-    log('titleList', list)
-    return list
-}
-
-var prevSrc = function(src) {
-    var len = songList.length
-    for (var i = 0; i < songList.length; i++) {
-        var s = `music/${songList[i]}`
-        if (src == s) {
-            if (i == 0) {
-                var title = titleList(songList)[len - 1]
-                $('#id-h1-song-title>i').text('  '+title)
-                return `music/${songList[len - 1]}`
-            }
-            var title = titleList(songList)[i - 1]
-            $('#id-h1-song-title>i').text('  '+title)
-            return `music/${songList[i - 1]}`
-        }
-    }
-}
-
-var nextSrc = function(src) {
-    var len = songList.length
-    for (var i = 0; i < songList.length; i++) {
-        var s = `music/${songList[i]}`
-        if (src == s) {
-            if (i == len - 1) {
-                var title = titleList(songList)[0]
-                $('#id-h1-song-title>i').text('  '+title)
-                return `music/${songList[0]}`
-            }
-            var title = titleList(songList)[i + 1]
-            $('#id-h1-song-title>i').text('  '+title)
-            return `music/${songList[i + 1]}`
-        }
-    }
-}
-
-// 设置滑块 时间进度
-var setSlider = function(value) {
-    var v = value * 100
-    $('#id-input-slider').val(v)
-}
-
+// 字符串补零
 var nChar = function(char, n) {
     var s = ''
     for (var i = 0; i < n; i++) {
@@ -65,13 +13,13 @@ var nChar = function(char, n) {
     }
     return s
 }
-
 var zfill = function(n, width) {
     var s = String(n)
     var len = s.length
     return nChar('0', width - len) + s
 }
 
+// 设置时间戳
 var labelFromTime = function(time) {
     var minutes = zfill(Math.floor(time / 60),2)
     var seconds = zfill(Math.floor(time % 60),2)
@@ -79,9 +27,21 @@ var labelFromTime = function(time) {
     return t
 }
 
+// 设置歌曲信息列表
+var titleList = function(songList) {
+    var list = []
+    for (var i = 0; i < songList.length; i++) {
+        var len = songList[i].length
+        var s = songList[i].slice(0,len -4)
+        list.push(s)
+    }
+    // log('titleList', list)
+    return list
+}
+
 // 添加播放器
 var bindAppendAudio = function() {
-    log('audio')
+    // log('audio')
     var audio = `<audio id=id-audio-player src="music/${songList[0]}"></audio>`
     $('body').append(audio)
 }
@@ -97,69 +57,117 @@ var bindAddSongList = function() {
     }
 }
 
-// 绑定播放器事件
-var bindAudioEvents = function() {
-    $('#id-audio-player').on('timeupdate', function(e){
-        var player = e.target
-        // 设置 播放比例
-        var value = player.currentTime / player.duration
-        setSlider(value)
-        $('.prog').width((value * 100) / 100 * $('range').width())
-        var time = labelFromTime(player.currentTime)
-        $('#id-time-current').text(time)
-    })
-    // 音乐播放完了之后的事件
-    $("#id-audio-player").on('ended', function(e){
+// 随机播放
+var randomplay = function() {
+    var len = songList.length
+    var random = Math.random() * len
+    var index = Math.floor(random)
+    var title = titleList(songList)[index]
+    $('#id-h1-song-title').html(`<i class="fa fa-music"></i>  ${title}`)
+    var randomsrc = `music/${songList[index]}`
+    log('随机播放 src --->', randomsrc)
+    var player = $('#id-audio-player')[0]
+    player.autoplay = !player.paused
+    player.src = randomsrc
+}
 
-        log('播放模式', playerMode)
-        // 根据播放模式来播放下一首
-    })
-    // 加载音乐后的事件
-    $('#id-audio-player').on('canplay', function(e){
-        var player = e.target
-        log('can play', player.duration)
-        var time = labelFromTime(player.duration)
-        // 滑条归位， 时间重置
-        $('#id-input-slider').val(0)
-        $('#id-time-current').text('00:00')
-        $('#id-time-duration').text(time)
-    })
+// 切换为随机 模式
+var orderSong = function (button) {
+    log('切换为随机播放 模式')
+    button.dataset.action = 'random'
+    $(button).removeClass("fa-exchange").addClass("fa-random")
+}
+
+// 切换为顺序 模式
+var randomSong = function(button) {
+    log('切换为顺序播放 模式')
+    button.dataset.action = 'order'
+    $(button).removeClass("fa-random").addClass("fa-exchange")
+}
+
+// 上一首的src
+var prevSrc = function(src) {
+    var len = songList.length
+    for (var i = 0; i < songList.length; i++) {
+        var s = `music/${songList[i]}`
+        if (src == s) {
+            if (i == 0) {
+                var title = titleList(songList)[len - 1]
+                $('#id-h1-song-title').html(`<i class="fa fa-music"></i>  ${title}`)
+                return `music/${songList[len - 1]}`
+            }
+            var title = titleList(songList)[i - 1]
+            $('#id-h1-song-title').html(`<i class="fa fa-music"></i>  ${title}`)
+            return `music/${songList[i - 1]}`
+        }
+    }
+}
+
+// 下一首的src
+var nextSrc = function(src) {
+    var len = songList.length
+    for (var i = 0; i < songList.length; i++) {
+        var s = `music/${songList[i]}`
+        if (src == s) {
+            if (i == len - 1) {
+                var title = titleList(songList)[0]
+                $('#id-h1-song-title').html(`<i class="fa fa-music"></i>  ${title}`)
+                return `music/${songList[0]}`
+            }
+            var title = titleList(songList)[i + 1]
+            $('#id-h1-song-title').html(`<i class="fa fa-music"></i>  ${title}`)
+            return `music/${songList[i + 1]}`
+        }
+    }
 }
 
 // 播放上一首
 var prevSong = function() {
     var activeSrc = $('#id-audio-player').attr('src')
-    var nowsrc = prevSrc(activeSrc)
-    log('播放上一首--->', nowsrc)
-    var player = $('#id-audio-player')[0]
-    player.autoplay = !player.paused
-    player.src = nowsrc
+    var type = document.querySelector('.play-mode').dataset.action
+    if (type == 'order') {
+        var nowsrc = prevSrc(activeSrc)
+        log('顺序播放上一首--->', nowsrc)
+        var player = $('#id-audio-player')[0]
+        player.autoplay = !player.paused
+        player.src = nowsrc
+    }else {
+        randomplay()
+    }
+
 }
 
 //播放下一首
 var nextSong = function() {
     var activeSrc = $('#id-audio-player').attr('src')
-    var nowsrc = nextSrc(activeSrc)
-    log('播放下一首--->', nowsrc)
-    var player = $('#id-audio-player')[0]
-    player.autoplay = !player.paused
-    player.src = nowsrc
+    var type = document.querySelector('.play-mode').dataset.action
+    if (type == 'order') {
+        var nowsrc = nextSrc(activeSrc)
+        log('顺序播放下一首--->', nowsrc)
+        var player = $('#id-audio-player')[0]
+        player.autoplay = !player.paused
+        player.src = nowsrc
+    }else {
+        randomplay()
+    }
 }
 
 // 播放歌曲
 var playSong = function(button) {
+    log('播放')
     $('#id-audio-player')[0].play()
     button.dataset.action = 'pause'
     $(button).removeClass("fa-play").addClass("fa-pause")
-    log('button',button)
+    // log('button',button)
 }
 
 // 暂停歌曲
 var pauseSong = function(button) {
+    log('暂停')
     $('#id-audio-player')[0].pause()
     button.dataset.action = 'play'
     $(button).removeClass("fa-pause").addClass("fa-play")
-    log('button',button)
+    // log('button',button)
 }
 
 // 播放事件
@@ -168,6 +176,8 @@ var bindPlayEvents = function() {
         var button = event.target
         var type = button.dataset.action
         var actions = {
+            random: randomSong,
+            order: orderSong,
             prev: prevSong,
             next: nextSong,
             play: playSong,
@@ -178,6 +188,53 @@ var bindPlayEvents = function() {
     })
 }
 
+// 绑定播放器事件
+var bindAudioEvents = function() {
+    $('#id-audio-player').on('timeupdate', function(e){
+        var player = e.target
+        // 设置 播放比例
+        var value = player.currentTime / player.duration
+        // 设置滑块 时间进度
+        $('#id-input-slider').val(value * 100)
+        $('.prog').width((value * 100) / 100 * $('range').width())
+        var time = labelFromTime(player.currentTime)
+        $('#id-time-current').text(time)
+    })
+    $('#id-input-slider').on('change', function() {
+        log('change')
+        var player = $('#id-audio-player')[0]
+                // 获取滑动条滑动到哪里的值
+        var value = $('#id-input-slider').val()
+        // 设置这个值给播放时间
+        // 首先返回当前播放文件的总时长
+        var currentDuration = player.duration
+        var setTime = value / 100 * currentDuration
+        player.currentTime = setTime
+    })
+    // 音乐播放完了之后的事件
+    $("#id-audio-player").on('ended', function(e){
+        // 确定当前 播放模式
+        var player = $('#id-audio-player')[0]
+        nextSong()
+        player.play()
+    })
+    // 加载音乐后的事件
+    $('#id-audio-player').on('canplay', function(e){
+        var player = e.target
+        // log('can play', player.duration)
+        var time = labelFromTime(player.duration)
+        // 滑条归位， 时间重置
+        $('#id-input-slider').val(0)
+        $('#id-time-current').text('00:00')
+        $('#id-time-duration').text(time)
+    })
+    $('#id-input-volume').on('change', function(event){
+        log('input-volume',event.target)
+        var volume = event.target.value / 100
+        $('#id-audio-player')[0].volume = volume
+    })
+}
+
 // 选择曲目播放
 var bindSwitch = function() {
     var player = $('#id-audio-player')[0]
@@ -185,18 +242,19 @@ var bindSwitch = function() {
     $('.song').on('click', function(e){
         var self = $(e.target)
         var song = self.text()
-        log('click', song)
+        // log('click', song)
         // 根据当前播放状态设置 autoplay
         player.autoplay = !player.paused
-        log('player.autoplay',!player.paused)
+        // log('player.autoplay',!player.paused)
         // 切换歌曲
         player.src = `music/${song}.mp3`
-        log('duration', player.duration)
+        // log('duration', player.duration)
         // 设置当前歌曲名称
-        $('#id-h1-song-title>i').text('  '+song)
+        $('#id-h1-song-title').html(`<i class="fa fa-music"></i>  ${song}`)
     })
 }
 
+var songList = ["空白格.mp3", "其实都没有.mp3", "if you.mp3","杨宗纬 - 我变了 我没变.mp3","Audiomachine (音频机器) - Shadowfall (暗影坠落).mp3"]
 
 var bindEvents = function() {
     bindAddSongList()

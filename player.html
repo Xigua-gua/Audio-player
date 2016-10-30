@@ -7,36 +7,42 @@
         <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
         <title>Music player</title>
         <link rel="stylesheet" href="player.css" charset="utf-8">
+
     </head>
     <body>
         <!-- <audio id=id-audio-player src="music/空白格.mp3"></audio> -->
-        <div class="content">
+        <div class="content center">
             <div class="player-controls">
                 <div class="player-slider center">
                     <input id=id-input-slider type="range" min=0 max=100 value="0">
-                    <range>
-                        <div class="prog"></div>
-                    </range>
+                    <range><div class="prog"></div></range>
                 </div>
                 <div class="player-time">
                     <time id=id-time-current class="left"></time>
                     <time id=id-time-duration class="right"></time>
                 </div>
             </div>
-            <h1 id=id-h1-song-title class="center"><i class="fa fa-music"> 空白格</i></h1>
+            <h1 id=id-h1-song-title class="center"><i class="fa fa-music"></i> 空白格</h1>
             <div class="player-play center">
-                <button class="player-button fa fa-random" type="button"></button>
-                <button class="player-button fa fa-step-backward" type="button" data-action="prev"></button>
-                <button class="player-button fa fa-play" type="button" data-action="play"></button>
-                <button class="player-button fa fa-step-forward" type="button" data-action="next"></button>
+                <button class="player-button fa fa-list-ul"></button>
+                <!-- <button class="player-button fa fa-exchange" type="button"></button> -->
+                <button class="player-button play-mode fa fa-random" data-action="random"></button>
+                <button class="player-button fa fa-step-backward" data-action="prev"></button>
+                <button class="player-button fa fa-play" data-action="play"></button>
+                <button class="player-button fa fa-step-forward" data-action="next"></button>
+
             </div>
+            <div class="player-volume center">
+                <div class="fa fa-volume-up"></div>
+                <input id="id-input-volume" type="range" max=100 value="100">
+            </div>
+
             <div class="player-list-container center">
                 <!-- <div class="song">空白格</div>
                 <div class="song">其实都没有</div>
                 <div class="song">if you</div> -->
             </div>
         </div>
-
     </body>
     <script src='player.js'></script>
 </html>

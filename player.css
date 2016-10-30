@@ -78,7 +78,7 @@ i.fa.fa-music {
     padding: 2px;
 }
 #id-input-volume {
-    background: #4bdbe4;
+    background: #bf9d9d;
     height: 4px;
     -webkit-appearance: none;
     width: 150px;
@@ -97,9 +97,9 @@ i.fa.fa-music {
     height: 8px;
     width: 8px;
     margin-top: 3px; /*使滑块超出轨道部分的偏移量相等*/
-    background: #ec4a77;
+    background: #49dbe4;
     border-radius: 50%; /*外观设置为圆形*/
-    border: solid 0.125em #ec4a77; /*设置边框*/
+    border: solid 0.025em #ec4a77; /*设置边框*/
 }
 .player-list-container {
     margin-top: 6px;

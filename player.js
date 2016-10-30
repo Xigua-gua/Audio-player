@@ -170,7 +170,7 @@ var pauseSong = function(button) {
     // log('button',button)
 }
 
-// 播放事件
+// 播放按钮事件
 var bindPlayEvents = function() {
     $('.player-play').on('click', '.player-button', function(event) {
         var button = event.target
@@ -188,8 +188,9 @@ var bindPlayEvents = function() {
     })
 }
 
-// 绑定播放器事件
+// 播放器调节事件
 var bindAudioEvents = function() {
+    // 调节 歌曲时间进度
     $('#id-audio-player').on('timeupdate', function(e){
         var player = e.target
         // 设置 播放比例
@@ -200,6 +201,7 @@ var bindAudioEvents = function() {
         var time = labelFromTime(player.currentTime)
         $('#id-time-current').text(time)
     })
+    // 动态调节 歌曲进度
     $('#id-input-slider').on('change', function() {
         log('change')
         var player = $('#id-audio-player')[0]
@@ -228,11 +230,30 @@ var bindAudioEvents = function() {
         $('#id-time-current').text('00:00')
         $('#id-time-duration').text(time)
     })
+    // 动态调节音量
     $('#id-input-volume').on('change', function(event){
-        log('input-volume',event.target)
+        // log('input-volume',event.target)
         var volume = event.target.value / 100
         $('#id-audio-player')[0].volume = volume
+        log(`音量为 ${$('#id-audio-player')[0].volume}`)
     })
+    // 切换静音设置
+    $('.fa.fa-volume-up').on('click', function(event){
+        var icon = $(event.target)
+        toggleVolumeIcon(icon)
+        log(`音量为 ${$('#id-audio-player')[0].volume}`)
+    })
+}
+
+// 静音设置
+var toggleVolumeIcon= function(e) {
+    if (e.hasClass("fa-volume-up")) {
+        e.removeClass("fa-volume-up").addClass("fa-volume-off")
+        $('#id-audio-player')[0].volume = 0
+    }else {
+        e.removeClass("fa-volume-off").addClass("fa-volume-up")
+        $('#id-audio-player')[0].volume = $('#id-input-volume').val() / 100
+    }
 }
 
 // 选择曲目播放
@@ -254,7 +275,11 @@ var bindSwitch = function() {
     })
 }
 
-var songList = ["空白格.mp3", "其实都没有.mp3", "if you.mp3","杨宗纬 - 我变了 我没变.mp3","Audiomachine (音频机器) - Shadowfall (暗影坠落).mp3"]
+// music url
+var songList = ["空白格.mp3",
+                "其实都没有.mp3", "if you.mp3",
+                "杨宗纬 - 我变了 我没变.mp3",
+                "Audiomachine (音频机器) - Shadowfall (暗影坠落).mp3",]
 
 var bindEvents = function() {
     bindAddSongList()

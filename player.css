@@ -65,6 +65,7 @@ i.fa.fa-music {
     border-radius: 7px;
     font-size: 16px;
     border-color: #e4326e;
+    border-width: 0.1em;
     outline: none;
     cursor: pointer;
     color: white;
@@ -78,12 +79,13 @@ i.fa.fa-music {
     padding: 2px;
 }
 #id-input-volume {
+    position: relative;
     background: #bf9d9d;
     height: 4px;
     -webkit-appearance: none;
     width: 150px;
     border-radius: 10px;
-    vertical-align: middle;
+    top: -5px;
 }
 #id-input-volume::-webkit-slider-runnable-track {
     height: 15px;
